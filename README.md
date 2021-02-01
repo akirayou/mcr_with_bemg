@@ -20,8 +20,8 @@ BEMG制約を入れると、クロマト形状がBEMG関数をとる形のモノ
 
 ![Fig3](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_3.png)
 
-分離後スペクトルの例
 ![Fig4](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_4.png)
+分離後スペクトルの例
 
 
 クロマトピーク形状をシミュレーションで作っているので、そこそこリアルなリーディング・テーリングを楽しめます。
