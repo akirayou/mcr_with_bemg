@@ -12,13 +12,17 @@ pyMCRをつかってLC-PDA (LC-DAD)クロマトピークを分離する際に、
 
 pyMCRは初期値が必要なのでFastICAで初期値を作る
 ![Fig1](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_1.png)
+
 そのままpyMCRを実行するとそれなりには分離してくれる
 ![Fig2](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_2.png)
+
 BEMG制約を入れると、クロマト形状がBEMG関数をとる形のモノに絞ってくれる。
+
 ![Fig3](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_3.png)
+
 クロマトピーク形状をシミュレーションで作っているので、そこそこリアルなリーディング・テーリングを楽しめます。
-
-
+実装サンプルでは段理論(Plate therory)によるクロマトシミュレーションをRadke-Prausnitz等温線を使って、
+実行していますが、FreundlichやLangmuirも選べます。また配管デッドボリュームによる一次遅れテーリングも付加できます。
 
 #Refferences 参考文献
  - https://pages.nist.gov/pyMCR/
