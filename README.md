@@ -20,6 +20,10 @@ BEMG制約を入れると、クロマト形状がBEMG関数をとる形のモノ
 
 ![Fig3](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_3.png)
 
+分離後スペクトルの例
+![Fig4](https://github.com/akirayou/mcr_with_bemg/blob/main/img/Figure_4.png)
+
+
 クロマトピーク形状をシミュレーションで作っているので、そこそこリアルなリーディング・テーリングを楽しめます。
 実装サンプルでは段理論(Plate therory)によるクロマトシミュレーションをRadke-Prausnitz等温線を使って、
 実行していますが、FreundlichやLangmuirも選べます。また配管デッドボリュームによる一次遅れテーリングも付加できます。
