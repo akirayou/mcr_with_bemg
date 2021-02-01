@@ -32,4 +32,4 @@ BEMG制約を入れると、クロマト形状がBEMG関数をとる形のモノ
 #Refferences 参考文献
  - https://pages.nist.gov/pyMCR/
  - https://www.sciencedirect.com/science/article/abs/pii/S0021967316312535
- - https://patents.google.com/patent/WO2016035167A1/ja
+ - https://www.sciencedirect.com/science/article/pii/S0021967318314900#
