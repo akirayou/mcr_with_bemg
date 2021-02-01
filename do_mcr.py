@@ -2,13 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 from constraint import ConstraintBEMG
 from pymcr.constraints import ConstraintNonneg, ConstraintNorm
+
+import logging
+import sys
+logger = logging.getLogger('pymcr')
+logger.setLevel(logging.DEBUG)
+stdout_handler = logging.StreamHandler(stream=sys.stdout)
+stdout_format = logging.Formatter('%(message)s')  # Just a basic message akin to print statements
+stdout_handler.setFormatter(stdout_format)
+logger.addHandler(stdout_handler)
+
 d=np.load("dAB.npz")
 dA=d["dA"]
 dB=d["dB"]
-dB*=1
-D=dA+dB + np.random.randn(*dA.shape)*0.001
+dB*=0.5
+D=dA+dB +  np.random.randn(*dA.shape)*0.001
 gA=np.sum(dA,axis=1)#Grand Truth
 gB=np.sum(dB,axis=1)#Grand Truth
+gsA=np.sum(dA,axis=0)#Grand Truth
+gsB=np.sum(dB,axis=0)#Grand Truth
 
 
 from sklearn.decomposition import FastICA
@@ -37,14 +49,27 @@ plt.legend()
 plt.pause(0.1)
 
 
-mcrar_c = McrAR(c_constraints=[ConstraintNonneg(),ConstraintBEMG(range(2)) ])
-mcrar_c.fit(D, C=C_est,verbose=True)
+mcrar_c = McrAR(c_regr='NNLS', st_regr='NNLS',st_constraints=[],c_constraints=[ConstraintBEMG(range(2)) ])
+C_est_c=ConstraintBEMG(range(2)).transform(C_est)
+
+mcrar_c.fit(D, C=C_est_c,verbose=True)
 #mcrar_c.fit(D, ST=mcrar.ST_opt_,verbose=True)
 
 plt.figure()
 plt.title("result by MCR with BEMG")
-plt.plot(mcrar_c.C_opt_* np.sum(mcrar.ST_opt_,axis=1))
+print(np.sum(mcrar.ST_opt_,axis=1).shape)
+
+plt.plot(mcrar_c.C_opt_* np.sum(mcrar_c.ST_opt_,axis=1).reshape(1,-1))
 plt.plot(gA,label="trueA")
 plt.plot(gB,label="trueB")
+plt.legend()
+plt.pause(0.1)
+#plt.show()
+
+plt.figure()
+plt.title("result by MCR with BEMG / Spectrum")
+plt.plot(mcrar_c.ST_opt_.transpose()* np.sum(mcrar_c.C_opt_,axis=0))
+plt.plot(gsA,label="trueA")
+plt.plot(gsB,label="trueB")
 plt.legend()
 plt.show()

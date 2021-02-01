@@ -29,7 +29,7 @@ def _fit_bemg(y):
     p0=[2,2,s,x[u],A]
     #print("BEMG intial p0",p0)
     p,_dummy = curve_fit(_bemg,x,y,p0=p0)
-    print("BEMG estimated p",p)
+    #print("BEMG estimated p",p)
     yy=_bemg(x,*p)
     if False:
         plt.figure()
