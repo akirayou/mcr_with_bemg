@@ -1,7 +1,7 @@
 """
 Simulate chromagram peak shape wiht plate theory
 """
-import isotherm
+import sim_chrom.isotherm as isotherm
 import numpy as np
 class SimChrom:
     def _dv_input(self):
@@ -14,7 +14,7 @@ class SimChrom:
         return ret
 
       
-    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0):
+    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0,pass_rate : float =0 ):
         """
         Parameters
         -----------
@@ -32,7 +32,8 @@ class SimChrom:
         self.moving=np.zeros(n_plates)
         self.static=np.zeros(n_plates)
         self.moving[0]=1
-        for i in range(n_plates-1):
+        self.pass_rate=pass_rate
+        for _i in range(n_plates-1):
             self.step()
     
     def step(self):
@@ -42,8 +43,10 @@ class SimChrom:
         self.moving=np.roll(self.moving,1)
         o=self.moving[0]
         self.moving[0]=self._dv_input()
-        S=self.moving+self.static
+        passing=self.moving*self.pass_rate
+        S=self.moving*(1-self.pass_rate)+self.static
         self.moving,self.static=self.iso.redist(S)
+        self.moving+=passing
         return o
 
 if __name__ == '__main__': 

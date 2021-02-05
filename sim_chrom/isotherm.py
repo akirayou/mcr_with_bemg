@@ -115,6 +115,17 @@ class IsoFre(Isotherm):
     def iso(self,C):
         return self.K*C**(1/self.n)
 
+
+class IsoGLang(Isotherm):
+    """Generaized Langmuir"""
+    def __init__(self,b,Ws,n,m,eps=1e-7,alpha=0.1):
+        super().__init__(eps,alpha)
+        self.b = b
+        self.Ws = Ws
+        self.n=n  # 0<n<=1
+        self.m=m  # 0<m<=1
+    def iso(self,C):
+        return self.Ws*    ((self.b*C)**self.n /(1+ (self.b*C)**self.n ))**(self.m/self.n) 
 if __name__ == '__main__': 
     import matplotlib.pyplot as plt
     import numpy as np
