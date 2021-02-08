@@ -126,13 +126,28 @@ class IsoGLang(Isotherm):
         self.m=m  # 0<m<=1
     def iso(self,C):
         return self.Ws*    ((self.b*C)**self.n /(1+ (self.b*C)**self.n ))**(self.m/self.n) 
+
+
+class IsoBET(Isotherm):
+    """Generaized Langmuir"""
+    def __init__(self,a,Wc,Cc=1,eps=1e-7,alpha=0.1):
+        super().__init__(eps,alpha)
+        self.a = a
+        self.Wc = Wc
+        self.Cc = Cc
+    def iso(self,Cin):
+        C=Cin/self.Cc
+        C[C>9.999999]=9.999999
+        w=(C*self.Wc*self.a)/((1-C)*(1-C+C*self.a))
+        #w[w>1]=1
+        return w
 if __name__ == '__main__': 
     import matplotlib.pyplot as plt
     import numpy as np
     c=np.linspace(0,1,10000)
     
-    isos=[IsoRP(1,1,0.9),IsoLang(1,1),IsoFre(1,1.2)]
-    labels=["RP","Lang","Fre"]
+    isos=[IsoRP(1,1,0.9),IsoLang(1,1),IsoFre(1,1.2),IsoBET(5,1,1.1)]
+    labels=["RP","Lang","Fre","BET"]
     plt.figure()
     for iso,l in zip(isos,labels):
         plt.plot(c,iso.iso(c),label=l)

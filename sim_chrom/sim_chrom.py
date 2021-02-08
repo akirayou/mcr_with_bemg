@@ -14,7 +14,7 @@ class SimChrom:
         return ret
 
       
-    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0,pass_rate : float =0 ):
+    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0,pass_rate : float =0,inject=1 ):
         """
         Parameters
         -----------
@@ -26,7 +26,7 @@ class SimChrom:
             dead volume tailing  simulation (under 1 means no dead volume. )
         """
         self.dv=dead_volume
-        self._input=1
+        self._input=inject
         self._output=0
         self.iso=iso
         self.moving=np.zeros(n_plates)

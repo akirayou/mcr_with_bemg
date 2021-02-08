@@ -1,24 +1,35 @@
-from sim_chrom import SimChrom,IsoRP,IsoGLang
+from sim_chrom import SimChrom,IsoRP,IsoGLang,IsoBET
 import matplotlib.pyplot as plt
 import numpy as np 
 
 #Make simulalated chromatgarm
 #1/a+1/b=1
 #1/b=1/(1-1/a)
-b=2
+inject=10
+b=1
 Ws=1
-n=1.0
-m=1.2
+n=1
+m=1.1
+iso=IsoGLang(b,Ws,n,m)
+#iso=IsoBET(1,400,2,eps=1e-3,alpha=1e-2)
 
-chrom=SimChrom(100,IsoGLang(b,Ws,n,m),dead_volume=30,pass_rate=0)
+chrom=SimChrom(100,iso,dead_volume=0,pass_rate=0,inject=inject)
 chrom=np.array([ chrom.step() for i in range(300)])
 chromB=chrom
 chromA=np.roll(chrom,-60)
 
-plt.figure()
-#plt.plot(chromA,label="chromA")
-plt.plot(chromB,label="chromB")
-plt.yscale("log")
+c=np.linspace(0,1,100)
+
+
+fig=plt.figure()
+ax1 = fig.add_subplot(2, 1, 1)
+plt.title("Isotherm b:{} WS:{} n:{} m:{}".format(b,Ws,n,m))
+plt.plot(c,iso.iso(c))
+
+ax2 = fig.add_subplot(2, 1, 2)
+plt.plot(chromB,label="chrom")
+
+#plt.yscale("log")
 plt.legend()
 plt.pause(0.1)
 plt.show()
