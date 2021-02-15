@@ -1,17 +1,21 @@
-from sim_chrom import SimChrom,IsoRP,IsoGLang,IsoBET
+from sim_chrom import SimChrom,IsoRP,IsoGLang,IsoBET,IsoLang
 import matplotlib.pyplot as plt
 import numpy as np 
 
 #Make simulalated chromatgarm
-#1/a+1/b=1
-#1/b=1/(1-1/a)
-inject=10
-b=1
-Ws=1
-n=1
-m=1.1
-iso=IsoGLang(b,Ws,n,m)
-#iso=IsoBET(1,400,2,eps=1e-3,alpha=1e-2)
+
+inject=1
+
+C0=100.1  #satulation 
+W1=2
+rt=1.0 
+a=rt/W1*C0
+iso=IsoBET(a,W1,C0,eps=1e-3,alpha=1e-2)
+
+Ws=2.0
+a=rt/Ws
+iso=IsoLang(a,Ws)
+
 
 chrom=SimChrom(100,iso,dead_volume=0,pass_rate=0,inject=inject)
 chrom=np.array([ chrom.step() for i in range(300)])
@@ -23,7 +27,7 @@ c=np.linspace(0,1,100)
 
 fig=plt.figure()
 ax1 = fig.add_subplot(2, 1, 1)
-plt.title("Isotherm b:{} WS:{} n:{} m:{}".format(b,Ws,n,m))
+plt.title("Isotherm ")
 plt.plot(c,iso.iso(c))
 
 ax2 = fig.add_subplot(2, 1, 2)

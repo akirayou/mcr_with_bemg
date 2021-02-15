@@ -5,16 +5,18 @@ import sim_chrom.isotherm as isotherm
 import numpy as np
 class SimChrom:
     def _dv_input(self):
+        if(self.inject_width>0):self.inject_width-=1
+
         if(self.dv<1):
             ret=self._input
-            self._input=0
+            if(self.inject_width<=0):self._input=0
         else:
             ret=self._input / self.dv
-            self._input-=ret
+            if(self.inject_width<=0):self._input-=ret
         return ret
 
       
-    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0,pass_rate : float =0,inject=1 ):
+    def __init__(self,n_plates : int, iso : isotherm.Isotherm,dead_volume : float =0,pass_rate : float =0,inject=1,inject_width=1 ):
         """
         Parameters
         -----------
@@ -27,6 +29,7 @@ class SimChrom:
         """
         self.dv=dead_volume
         self._input=inject
+        self.inject_width=inject_width
         self._output=0
         self.iso=iso
         self.moving=np.zeros(n_plates)

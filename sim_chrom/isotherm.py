@@ -48,8 +48,8 @@ class Isotherm(_ABC):
         C : real
             Concentration of moving phase (normalized)
         """
-        oldC=S
-        C=S
+        oldC=S/2
+        C=S/2
         while(True):
             W=self.iso(oldC)
             C=S-W
@@ -103,7 +103,7 @@ class IsoLang(Isotherm):
         self.Ws = Ws
     
     def iso(self,C):
-        return self.a*self.Ws*C*(1+self.a*C)
+        return self.a*self.Ws*C/(1+self.a*C)
 
 class IsoFre(Isotherm):
     """Freundlich"""
@@ -127,20 +127,18 @@ class IsoGLang(Isotherm):
     def iso(self,C):
         return self.Ws*    ((self.b*C)**self.n /(1+ (self.b*C)**self.n ))**(self.m/self.n) 
 
-
 class IsoBET(Isotherm):
-    """Generaized Langmuir"""
-    def __init__(self,a,Wc,Cc=1,eps=1e-7,alpha=0.1):
+    """BET"""
+    def __init__(self,a,W1,C0=1,eps=1e-7,alpha=0.1):
         super().__init__(eps,alpha)
-        self.a = a
-        self.Wc = Wc
-        self.Cc = Cc
-    def iso(self,Cin):
-        C=Cin/self.Cc
-        C[C>9.999999]=9.999999
-        w=(C*self.Wc*self.a)/((1-C)*(1-C+C*self.a))
-        #w[w>1]=1
-        return w
+        #https://ja.wikipedia.org/wiki/%E5%90%B8%E7%9D%80%E7%AD%89%E6%B8%A9%E5%BC%8F#BET%E3%81%AE%E5%90%B8%E7%9D%80%E7%AD%89%E6%B8%A9%E5%BC%8F
+        self.a = a # it means  c0*exp( (E1-E)/RT )
+        self.W1 = W1
+        self.C0 = C0
+    def iso(self,C):
+        return (C*self.C0*self.W1*self.a)/((self.C0-C)*(C*self.a+self.C0-C))
+       
+
 if __name__ == '__main__': 
     import matplotlib.pyplot as plt
     import numpy as np
