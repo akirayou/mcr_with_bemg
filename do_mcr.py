@@ -49,6 +49,10 @@ plt.legend()
 plt.pause(0.1)
 
 
+
+
+
+
 mcrar_c = McrAR(c_regr='NNLS', st_regr='NNLS',st_constraints=[],c_constraints=[ConstraintBEMG(range(2)) ])
 C_est_c=ConstraintBEMG(range(2)).transform(C_est)
 
