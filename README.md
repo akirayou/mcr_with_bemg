@@ -8,7 +8,8 @@ pyMCRをつかってLC-PDA (LC-DAD)クロマトピークを分離する際に、
  - sim_chrom.py : chromatogram simulation code 　クロマト波形をシミュレーションします
  - isotherm.py : isotherm for chromatogram simulation　クロマト波形シミュレーション用の吸着等温線
 
-
+注意:pyMCRのGauss Constraint風にConstraintでBEMG制約を実装しているが、収束しない可能性がある。
+regressor部にて制約を実装するほうがよいかも。（要確認）
 
 pyMCRは初期値が必要なのでFastICAで初期値を作る
 
