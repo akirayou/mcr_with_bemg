@@ -1,7 +1,7 @@
 
 import pymcr.constraints
 from scipy.special import erfc
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit,minimize
 import numpy as np
 import math
 import matplotlib.pyplot as plt
@@ -84,6 +84,10 @@ class FunBEMG():
         while(ei<N-2 and A/2 <y[ei] ): ei+=1
         s=(x[ei]-x[si])/2.86     
         return la, lb, s, u, A
+    def upper_bounds(self):
+        return [4,4,np.inf,np.inf,np.inf]
+    def lower_bounds(self):
+        return [-5,-5,1e-2,-np.inf,0]
     def nof_p(self):
         return 5
     def fun(self,x,p):
@@ -98,15 +102,19 @@ class FunLin():
         return p.tolist()
     def nof_p(self):
         return self.deg+1
+    def upper_bounds(self):
+        return [np.inf]*self.nof_p()
+    def lower_bounds(self):
+        return [-np.inf]*self.nof_p()
+        
     def fun(self,x,p):
-        return np.poy1d(x,p)
-
+        return np.poly1d(p)(x)
 from pymcr.regressors import OLS, NNLS
 class RegArray:
-    coeff_ = None 
+    coef_ = None 
     def __init__(self,funs):
         self.funs=funs
-        self.initial_reg=OLS()
+        self.initial_reg=NNLS()
     def fit(self,STT,DT):
         #初期値を
         self.initial_reg.fit(STT, DT)
@@ -114,13 +122,36 @@ class RegArray:
         p0=[]
         N=C_temp.shape[0]
         x=np.linspace(-1,1,N)
+        bounds=[[],[]]
         for n in range(C_temp.shape[1]):
-            p0.extend(funs[i],get_p0(x,C_temp[:,n]))
+            p0.extend(self.funs[n].get_p0(x,C_temp[:,n]))
+            #plt.figure("R{}".format(n))
+            #plt.clf()
+            #plt.plot(C_temp[:,n])
+            #plt.plot(self.funs[n].fun(x,p0[-self.funs[n].nof_p():  ]))
+            #plt.pause(0.1)
+            bounds[0].extend(self.funs[n].lower_bounds())
+            bounds[1].extend(self.funs[n].upper_bounds())
+        def fun(x,*p):
+            pos=0
+            C=np.zeros((DT.shape[1],STT.shape[1]))
+            for i,fun in enumerate(self.funs):
+                pp=p[pos:pos+fun.nof_p()]
+                C[:,i]=fun.fun(x,pp)
+                pos+=fun.nof_p()
+            return C
+        def funD(x,*p):
+            return np.dot(fun(x,*p),STT.T).reshape(-1)
         
-        #p0に入った初期値を使ってcurve_fit
-        ##########WIP########
-
-        pass
+        #p=p0        
+        p=curve_fit(funD,x,DT.T.reshape(-1),p0=p0,bounds=bounds)[0]
+        #print("p" ,p)
+        C=fun(x,*p)
+        #plt.figure("C")
+        #plt.clf()
+        #plt.plot(C)
+        #plt.pause(10)
+        self.coef_=C
 
 
 if __name__ == '__main__': 

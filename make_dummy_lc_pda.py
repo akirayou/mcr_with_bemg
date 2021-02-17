@@ -12,7 +12,7 @@ rt=1.0
 a=rt/W1*C0
 iso=IsoBET(a,W1,C0,eps=1e-3,alpha=1e-2)
 
-Ws=1.0
+Ws=2
 a=rt/Ws
 iso=IsoLang(a,Ws)
 
@@ -20,7 +20,7 @@ iso=IsoLang(a,Ws)
 chrom=SimChrom(100,iso,dead_volume=0,pass_rate=0,inject=inject)
 chrom=np.array([ chrom.step() for i in range(300)])
 chromB=chrom
-chromA=np.roll(chrom,40)*0.5
+chromA=np.roll(chrom,50)
 
 c=np.linspace(0,1,100)
 
@@ -42,14 +42,16 @@ plt.pause(0.1)
 x=np.linspace(0,1,512)
 spA=np.exp(-2*x)*(2+np.sin(x*15))
 spB=spA+ np.exp(-2*x)*(np.cos(x*20)*0.3)
-plt.figure()
-plt.plot(spA,label="spA")
-plt.plot(spB,label="spB")
-plt.legend()
-plt.show()
 
 #save simulated chromagram for pyMCR's D
 dA=chromA.reshape(-1,1)*spA.reshape(1,-1)
 dB=chromB.reshape(-1,1)*spB.reshape(1,-1)
 
 np.savez("dAB",dA=dA,dB=dB)
+
+
+plt.figure()
+plt.plot(spA,label="spA")
+plt.plot(spB,label="spB")
+plt.legend()
+plt.show()
