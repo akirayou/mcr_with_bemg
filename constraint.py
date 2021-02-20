@@ -1,6 +1,6 @@
 
 import pymcr.constraints
-from scipy.special import erfc
+from scipy.special import erfcx
 from scipy.optimize import curve_fit,minimize
 import numpy as np
 import math
@@ -9,19 +9,18 @@ def _bemg(x_in,la,lb, s, u,A):
     a=math.exp(la) #la,lb default 2
     b=math.exp(lb)
     x=(x_in-u)/s
-    Eb=b*x+b**2/4
-    Ea=a**2/4-a*x
-    Eb[Eb>700]=700 #to avoid NaN
-    Ea[Ea>700]=700
-    ret=np.exp(Eb)*erfc(x+b/2) +np.exp(Ea)*erfc(-x+a/2)*3.4
-    return A*ret
+    Ea=(a/2+x)
+    Eb=(b/2-x)
+    Ea[Ea<-25]=-25
+    Eb[Eb<-25]=-25
+    return A*a*b/(a+b)* np.exp(-x**2)* (erfcx(Eb)+erfcx(Ea))
 
 def _fit_bemg(y):
     N=len(y)
     x=np.linspace(-1,1,N)
 
-    la=2
-    lb=2
+    la=4
+    lb=4
     ui=np.argmax(y)
     u=x[ui]
     A=y[ui]
@@ -34,7 +33,7 @@ def _fit_bemg(y):
 
     p0=[la,lb,s,u,A]
     #print("BEMG intial p0",p0)
-    p,_dummy = curve_fit(_bemg,x,y,p0=p0)
+    p,_dummy = curve_fit(_bemg,x,y,p0=p0,bounds=( (-5,-5,1e-2,-np.inf,0 ), (10,10,np.inf,np.inf,np.inf)  ))
     #print("BEMG estimated p",p)
     yy=_bemg(x,*p)
     if False:
@@ -72,8 +71,8 @@ class FunBEMG():
         pass
     def get_p0(self,x,y):
         N=len(y)
-        la=2
-        lb=2
+        la=4
+        lb=4
         ui=np.argmax(y)
         u=x[ui]
         A=y[ui]
@@ -85,7 +84,7 @@ class FunBEMG():
         s=(x[ei]-x[si])/2.86     
         return la, lb, s, u, A
     def upper_bounds(self):
-        return [4,4,np.inf,np.inf,np.inf]
+        return [10,10,np.inf,np.inf,np.inf]
     def lower_bounds(self):
         return [-5,-5,1e-2,-np.inf,0]
     def nof_p(self):
